@@ -1,0 +1,11 @@
+{
+    "complex": true,
+    "model_complexity": 45,
+    "model_depth": 14,
+    "log_amp": false,
+    "padding_mode": "zeros",
+    "win_len": 640,
+    "win_inc": 320,
+    "fft_len": 640,
+    "win_type": "hanning"
+}

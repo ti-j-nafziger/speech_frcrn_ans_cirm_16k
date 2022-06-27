@@ -2,7 +2,7 @@
   "task": "speech-signal-process",
   "pipeline": {
      "type": "speech_frcrn_ans_cirm_16k"
-  }
+  },
   "model": {
     "type": "speech_frcrn_ans_cirm_16k",
     "complex": true,

@@ -1,6 +1,6 @@
 ---
 tasks:
-- acoustic-noise-suppression
+- speech-signal-process
 model_type:
 - complex-nn
 domain:

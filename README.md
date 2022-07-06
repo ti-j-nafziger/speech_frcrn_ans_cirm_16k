@@ -33,7 +33,12 @@ tags:
 
 #### 环境准备：
 
-* 本模型已经在1.8~1.11下测试通过，由于PyTorch v1.12.0的[BUG](https://github.com/pytorch/pytorch/issues/80837)，目前无法在v1.12.0上运行，请准备环境时注意PyTorch版本。
+* 本模型已经在1.8~1.11下测试通过，由于PyTorch v1.12.0的[BUG](https://github.com/pytorch/pytorch/issues/80837)，目前无法在v1.12.0上运行，如果您已经安装了此版本请执行以下命令回退到v1.11
+
+```
+conda install pytorch==1.11 torchaudio torchvision -c pytorch
+```
+
 * 本模型的pipeline中使用了三方库SoundFile进行wav文件处理，**在Linux系统上用户需要手动安装SoundFile的底层依赖库libsndfile**，在Windows和MacOS上会自动安装不需要用户操作。详细信息可参考[SoundFile官网](https://github.com/bastibe/python-soundfile#installation)。以Ubuntu系统为例，用户需要执行如下命令:
 
 ```shell

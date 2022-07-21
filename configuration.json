@@ -1,4 +1,5 @@
 {
+  "framework": "pytorch",
   "task": "speech-signal-process",
   "pipeline": {
      "type": "speech_frcrn_ans_cirm_16k"

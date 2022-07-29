@@ -1,6 +1,25 @@
 ---
 tasks:
 - speech-signal-process
+widgets:
+- task: speech-signal-process
+  inputs:
+  - type: audio
+    name: input
+    title: 带噪音的原始音频
+    validator:
+      max_size:10M
+  examples:
+  - name: 1
+    title: 示例1
+    inputs:
+    - name: input
+      data: git://examples/speech_with_noise.wav
+  inferencespec:
+    cpu: 1
+    memory: 1000
+    gpu: 0
+    gpu_memory: 1000
 model_type:
 - complex-nn
 domain:

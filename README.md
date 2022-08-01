@@ -1,8 +1,8 @@
 ---
 tasks:
-- speech-signal-process
+- acoustic-noise-suppression
 widgets:
-- task: speech-signal-process
+- task: acoustic-noise-suppression
   inputs:
   - type: audio
     name: input

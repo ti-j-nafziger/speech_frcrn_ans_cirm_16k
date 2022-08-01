@@ -1,6 +1,7 @@
 {
   "framework": "pytorch",
-  "task": "speech-signal-process",
+  "task": "acoustic-noise-suppression",
+  "framework": "pytorch",
   "pipeline": {
      "type": "speech_frcrn_ans_cirm_16k"
   },
@@ -15,5 +16,39 @@
     "win_inc": 320,
     "fft_len": 640,
     "win_type": "hanning"
+  },
+  "train": {
+      "max_epoch": 10,
+      "dataloader": {
+          "batch_size_per_gpu": 12,
+          "workers_per_gpu": 1
+      },
+      "learn_rate": 0.001,
+      "weight_decay": 0.00001,
+      "seed": 20,
+      "clip_grad_norm": 10.0,
+      "optimizer": {
+          "type": "Adam",
+          "lr": 0.001,
+          "options": {
+              "grad_clip": {
+                  "max_norm": 2.0
+              }
+          }
+      },
+      "my_lr_scheduler": {
+          "type": "ReduceLROnPlateau",
+          "mode": "min",
+          "factor": 0.98,
+          "patience": 2,
+          "verbose": true
+      }
+  },
+  "evaluation": {
+        "dataloader": {
+            "batch_size_per_gpu": 12,
+            "workers_per_gpu": 1
+        },
+        "metrics": ["audio_noise_metric"]
   }
 }

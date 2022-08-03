@@ -8,7 +8,7 @@ widgets:
     name: input
     title: 带噪音的原始音频
     validator:
-      max_size:10M
+      max_size: 10M
   examples:
   - name: 1
     title: 示例1

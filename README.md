@@ -1,7 +1,6 @@
 ---
 tasks:
 - acoustic-noise-suppression
-
 widgets:
 - task: acoustic-noise-suppression
   inputs:

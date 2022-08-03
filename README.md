@@ -28,7 +28,7 @@ frameworks:
 - pytorch
 model-backbone:
 - frcrn
-license: apache-2.0
+license: Apache License 2.0
 tags:
 - Alibaba
 - Mind DNS

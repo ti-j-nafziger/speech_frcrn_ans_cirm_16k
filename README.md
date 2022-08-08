@@ -67,9 +67,17 @@ sudo apt-get install libsndfile1
 
 #### 代码范例
 
+首先下载测试音频到当前目录： https://isv-data.oss-cn-hangzhou.aliyuncs.com/ics/MaaS/ANS/sample_audio/speech_with_noise.wav
+
+然后运行以下代码：
+
 ```python
+from modelscope.pipelines import pipeline
+from modelscope.utils.constant import Tasks
+
+
 ans = pipeline(
-   Tasks.speech_signal_process,
+   Tasks.acoustic_noise_suppression,
    model='damo/speech_frcrn_ans_cirm_16k',
    pipeline_name=r'speech_frcrn_ans_cirm_16k')
 ans('speech_with_noise.wav', output_path='output.wav')

@@ -23,7 +23,7 @@ widgets:
 model_type:
 - complex-nn
 domain:
-- speech
+- audio
 frameworks:
 - pytorch
 model-backbone:
@@ -80,7 +80,7 @@ ans = pipeline(
    Tasks.acoustic_noise_suppression,
    model='damo/speech_frcrn_ans_cirm_16k',
    pipeline_name=r'speech_frcrn_ans_cirm_16k')
-ans('speech_with_noise.wav', output_path='output.wav')
+result = ans('speech_with_noise.wav', output_path='output.wav')
 ```
 
 ### 模型局限性以及可能的偏差

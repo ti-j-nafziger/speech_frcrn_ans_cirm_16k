@@ -17,7 +17,7 @@
     "win_type": "hanning"
   },
   "train": {
-      "max_epoch": 200,
+      "max_epochs": 200,
       "train_iters_per_epoch": 2000,
       "dataloader": {
           "batch_size_per_gpu": 12,

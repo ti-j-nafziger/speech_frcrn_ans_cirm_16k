@@ -28,6 +28,7 @@ frameworks:
 - pytorch
 model-backbone:
 - frcrn
+finetune-support: True
 license: Apache License 2.0
 tags:
 - Alibaba

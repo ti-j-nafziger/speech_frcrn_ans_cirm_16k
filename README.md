@@ -75,9 +75,11 @@ from modelscope.utils.constant import Tasks
 
 
 ans = pipeline(
-   Tasks.acoustic_noise_suppression,
-   model='damo/speech_frcrn_ans_cirm_16k')
-result = ans('https://modelscope.cn/api/v1/models/damo/speech_frcrn_ans_cirm_16k/repo?Revision=master&FilePath=examples/speech_with_noise.wav', output_path='output.wav')
+    Tasks.acoustic_noise_suppression,
+    model='damo/speech_frcrn_ans_cirm_16k')
+result = ans(
+    'https://modelscope.cn/api/v1/models/damo/speech_frcrn_ans_cirm_16k/repo?Revision=master&FilePath=examples/speech_with_noise.wav',
+    output_path='output.wav')
 ```
 
 ### 模型局限性以及可能的偏差

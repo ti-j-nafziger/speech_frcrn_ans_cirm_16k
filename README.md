@@ -88,9 +88,15 @@ result = ans(
 
 ## 数据评估及结果
 
-模型经过不同数据量训练后，在DNS Challenge 2021官方测试集上效果如下：
+与其他SOTA模型在DNS Challenge 2020官方测试集上对比效果如下：
 
 ![matrix.png](description/matrix.png)
+
+指标说明：
+
+* PESQ (Perceptual evaluation of speech quality) 语音质量感知评估，是一种客观的、全参考的语音质量评估方法，得分范围在-0.5--4.5之间，得分越高表示语音质量越好。
+* STOI (Short-Time Objective Intelligibility) 短时客观可懂度，反映人类的听觉感知系统对语音可懂度的客观评价，STOI 值介于0~1 之间，值越大代表语音可懂度越高，越清晰。
+* SNR (Signal-to-Noise Ratio) 语音信号信噪比，是衡量针对宽带噪声失真的语音增强算的常规方法。
 
 更多详情请参考下面相关论文。
 

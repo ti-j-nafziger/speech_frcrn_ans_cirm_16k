@@ -88,10 +88,34 @@ result = ans(
 
 ## 数据评估及结果
 
-模型效果请参考下面相关论文。
+模型经过不同数据量训练后，在DNS Challenge 2021官方测试集上效果如下：
+
+![matrix.png](description/matrix.png)
+
+更多详情请参考下面相关论文。
 
 ### 相关论文以及引用信息
 
-[1] Shengkui Zhao, Bin Ma, Karn N. Watcharasupat, and Woon-Seng Gan. "FRCRN: Boosting Feature Representation Using Frequency Recurrence for Monaural Speech Enhancement." In ICASSP 2022. IEEE. May 2022.
+[1]
 
-[2] Harishchandra Dubey, Vishak Gopal, Ross Cutler, Ashkan Aazami, Sergiy Matusevych, Sebastian Braun, Sefik Emre Eskimez, Manthan Thakker, Takuya Yoshioka, Hannes Gamper, and Robert Aichner. "ICASSP 2022 Deep Noise Suppression Challenge." In ICASSP 2022, IEEE. May 2022.
+```BibTeX
+@INPROCEEDINGS{9747578,
+  author={Zhao, Shengkui and Ma, Bin and Watcharasupat, Karn N. and Gan, Woon-Seng},
+  booktitle={ICASSP 2022 - 2022 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)}, 
+  title={FRCRN: Boosting Feature Representation Using Frequency Recurrence for Monaural Speech Enhancement}, 
+  year={2022},
+  pages={9281-9285},
+  doi={10.1109/ICASSP43922.2022.9747578}}
+```
+
+[2]
+
+```BibTeX
+@INPROCEEDINGS{9747230,
+  author={Dubey, Harishchandra and Gopal, Vishak and Cutler, Ross and Aazami, Ashkan and Matusevych, Sergiy and Braun, Sebastian and Eskimez, Sefik Emre and Thakker, Manthan and Yoshioka, Takuya and Gamper, Hannes and Aichner, Robert},
+  booktitle={ICASSP 2022 - 2022 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)}, 
+  title={Icassp 2022 Deep Noise Suppression Challenge}, 
+  year={2022},
+  pages={9271-9275},
+  doi={10.1109/ICASSP43922.2022.9747230}}
+```

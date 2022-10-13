@@ -54,7 +54,7 @@
       ]
   },
   "evaluation": {
-        "val_iters_per_epoch": 400,
+        "val_iters_per_epoch": 200,
         "dataloader": {
             "batch_size_per_gpu": 12,
             "workers_per_gpu": 0

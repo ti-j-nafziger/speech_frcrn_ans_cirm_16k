@@ -1,6 +1,7 @@
 {
   "framework": "pytorch",
   "task": "acoustic-noise-suppression",
+  "framework": "pytorch",
   "pipeline": {
      "type": "speech_frcrn_ans_cirm_16k"
   },

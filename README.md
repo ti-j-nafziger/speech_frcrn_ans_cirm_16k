@@ -33,6 +33,12 @@ license: Apache License 2.0
 tags:
 - Alibaba
 - Mind DNS
+datasets:
+  train:
+  - modelscope/ICASSP_2021_DNS_Challenge
+  evaluation:
+  - modelscope/ICASSP_2021_DNS_Challenge
+
 ---
 
 
@@ -42,7 +48,7 @@ tags:
 
 ## 模型描述
 
-模型输入和输出均为16kHz采样率单通道语音时域波形信号，输入信号可由单通道麦克风直接进行录制，输出为噪声抑制后的语音音频信号[1]。模型采用Deep Complex CRN结构，模型输入信号通过STFT变换转换成复数频谱特征作为输入，并采用Complex FSMN在频域上进行关联性处理和在时序特征上进行长序处理，预测中间输出目标Complex ideal ratio mask, 然后使用预测的mask和输入频谱相乘后得到增强后的频谱，最后通过STFT逆变换得到增强后语音波形信号。模型的训练数据采用了DNS-Challenge开源数据集[2]。
+模型输入和输出均为16kHz采样率单通道语音时域波形信号，输入信号可由单通道麦克风直接进行录制，输出为噪声抑制后的语音音频信号[1]。模型采用Deep Complex CRN结构，模型输入信号通过STFT变换转换成复数频谱特征作为输入，并采用Complex FSMN在频域上进行关联性处理和在时序特征上进行长序处理，预测中间输出目标Complex ideal ratio mask, 然后使用预测的mask和输入频谱相乘后得到增强后的频谱，最后通过STFT逆变换得到增强后语音波形信号。
 
 ![model.png](description/model.png)
 
@@ -87,6 +93,53 @@ result = ans(
 
 模型在存在多说话人干扰声的场景噪声抑制性能有不同程度的下降。
 
+## 训练数据介绍
+
+模型的训练数据来自DNS-Challenge开源数据集，是Microsoft团队为ICASSP相关挑战赛提供的，[官方网址](https://github.com/microsoft/DNS-Challenge)[2]。我们这个模型是用来处理16k音频，因此只使用了其中的fullband数据，并做了少量调整。为便于大家使用，我们把DNS Challenge 2020的数据集迁移在modelscope的[DatasetHub](https://modelscope.cn/datasets/modelscope/ICASSP_2021_DNS_Challenge/summary)上，用户可参照数据集说明文档下载使用。
+
+## 模型训练流程
+
+需要先按照数据集说明在本地生成训练数据，然后**更新以下代码中数据集路径（/your_local_path/ICASSP_2021_DNS_Challenge）**，才能正常训练。
+
+```python
+import os
+
+from datasets import load_dataset
+
+from modelscope.metainfo import Trainers
+from modelscope.msdatasets import MsDataset
+from modelscope.trainers import build_trainer
+from modelscope.utils.audio.audio_utils import to_segment
+
+tmp_dir = f'./ckpt'
+if not os.path.exists(tmp_dir):
+    os.makedirs(tmp_dir)
+
+hf_ds = load_dataset(
+    '/your_local_path/ICASSP_2021_DNS_Challenge',
+    'train',
+    split='train')
+mapped_ds = hf_ds.map(
+    to_segment,
+    remove_columns=['duration'],
+    num_proc=8,
+    batched=True,
+    batch_size=36)
+mapped_ds = mapped_ds.train_test_split(test_size=3000)
+mapped_ds = mapped_ds.shuffle()
+dataset = MsDataset.from_hf_dataset(mapped_ds)
+
+kwargs = dict(
+    model='damo/speech_frcrn_ans_cirm_16k',
+    model_revision='beta',
+    train_dataset=dataset['train'],
+    eval_dataset=dataset['test'],
+    work_dir=tmp_dir)
+trainer = build_trainer(
+    Trainers.speech_frcrn_ans_cirm_16k, default_args=kwargs)
+trainer.train()
+```
+
 ## 数据评估及结果
 
 与其他SOTA模型在DNS Challenge 2020官方测试集上对比效果如下：
@@ -95,9 +148,52 @@ result = ans(
 
 指标说明：
 
-* PESQ (Perceptual evaluation of speech quality) 语音质量感知评估，是一种客观的、全参考的语音质量评估方法，得分范围在-0.5--4.5之间，得分越高表示语音质量越好。
+* PESQ (Perceptual Evaluation Of Speech Quality) 语音质量感知评估，是一种客观的、全参考的语音质量评估方法，得分范围在-0.5--4.5之间，得分越高表示语音质量越好。
 * STOI (Short-Time Objective Intelligibility) 短时客观可懂度，反映人类的听觉感知系统对语音可懂度的客观评价，STOI 值介于0~1 之间，值越大代表语音可懂度越高，越清晰。
-* SNR (Signal-to-Noise Ratio) 语音信号信噪比，是衡量针对宽带噪声失真的语音增强算的常规方法。
+* SI-SNR (Scale Invariant Signal-to-Noise Ratio) 尺度不变的信噪比，是在普通信噪比基础上通过正则化消减信号变化导致的影响，是针对宽带噪声失真的语音增强算法的常规衡量方法。
+
+DNS Challenge的结果列表在[这里](https://www.microsoft.com/en-us/research/academic-program/deep-noise-suppression-challenge-icassp-2022/results/)。
+
+### 模型评估代码
+可通过如下代码对模型进行评估验证，我们在modelscope的[DatasetHub](https://modelscope.cn/datasets/modelscope/ICASSP_2021_DNS_Challenge/summary)上存储了DNS Challenge 2020的验证集，方便用户下载调用。
+
+```python
+import os
+import tempfile
+
+from modelscope.metainfo import Trainers
+from modelscope.msdatasets import MsDataset
+from modelscope.trainers import build_trainer
+from modelscope.utils.audio.audio_utils import to_segment
+
+tmp_dir = tempfile.TemporaryDirectory().name
+if not os.path.exists(tmp_dir):
+    os.makedirs(tmp_dir)
+
+hf_ds = MsDataset.load(
+    'ICASSP_2021_DNS_Challenge', split='test').to_hf_dataset()
+mapped_ds = hf_ds.map(
+    to_segment,
+    remove_columns=['duration'],
+    # num_proc=5, # Comment this line to avoid error in Jupyter notebook
+    batched=True,
+    batch_size=36)
+dataset = MsDataset.from_hf_dataset(mapped_ds)
+kwargs = dict(
+    model='damo/speech_frcrn_ans_cirm_16k',
+    model_revision='beta',
+    train_dataset=None,
+    eval_dataset=dataset,
+    val_iters_per_epoch=125,
+    work_dir=tmp_dir)
+
+trainer = build_trainer(
+    Trainers.speech_frcrn_ans_cirm_16k, default_args=kwargs)
+
+eval_res = trainer.evaluate()
+print(eval_res['avg_sisnr'])
+
+```
 
 更多详情请参考下面相关论文。
 

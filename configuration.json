@@ -17,6 +17,7 @@
     "fft_len": 640,
     "win_type": "hanning"
   },
+  "preprocessor": {},
   "train": {
       "max_epochs": 200,
       "train_iters_per_epoch": 2000,

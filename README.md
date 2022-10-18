@@ -34,6 +34,11 @@ license: Apache License 2.0
 tags:
 - Alibaba
 - Mind DNS
+- ANS
+- AI降噪
+- 语音增强
+- 音频前处理
+- 3A
 datasets:
   train:
   - modelscope/ICASSP_2021_DNS_Challenge

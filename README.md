@@ -105,7 +105,9 @@ result = ans(
 
 ## 模型训练流程
 
-需要先按照数据集说明在本地生成训练数据，然后**更新以下代码中数据集路径（/your_local_path/ICASSP_2021_DNS_Challenge）**，才能正常训练。
+以下为模型训练示例代码，使用测试数据集，以便开发者能快速验证环境，串通流程。
+
+如果想用更多数据进行训练，可以按照[数据集](https://modelscope.cn/datasets/modelscope/ICASSP_2021_DNS_Challenge/summary)说明文档，在本地生成训练数据，然后改用以下注释中的代码加载数据集。注意**其中的数据集路径（/your_local_path/ICASSP_2021_DNS_Challenge）要更新为您本地的实际路径**。
 
 ```python
 import os
@@ -121,17 +123,29 @@ tmp_dir = f'./ckpt'
 if not os.path.exists(tmp_dir):
     os.makedirs(tmp_dir)
 
-hf_ds = load_dataset(
-    '/your_local_path/ICASSP_2021_DNS_Challenge',
-    'train',
-    split='train')
+# Loading dataset
+hf_ds = MsDataset.load(
+    'ICASSP_2021_DNS_Challenge', split='test').to_hf_dataset()
 mapped_ds = hf_ds.map(
     to_segment,
     remove_columns=['duration'],
-    num_proc=8,
     batched=True,
     batch_size=36)
-mapped_ds = mapped_ds.train_test_split(test_size=3000)
+mapped_ds = mapped_ds.train_test_split(test_size=150)
+# Use below code for real large data training
+# hf_ds = load_dataset(
+#     '/your_local_path/ICASSP_2021_DNS_Challenge',
+#     'train',
+#     split='train')
+# mapped_ds = hf_ds.map(
+#     to_segment,
+#     remove_columns=['duration'],
+#     num_proc=8,
+#     batched=True,
+#     batch_size=36)
+# mapped_ds = mapped_ds.train_test_split(test_size=3000)
+# End of comment
+
 mapped_ds = mapped_ds.shuffle()
 dataset = MsDataset.from_hf_dataset(mapped_ds)
 

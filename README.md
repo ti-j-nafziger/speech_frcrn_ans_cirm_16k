@@ -14,6 +14,11 @@ widgets:
     title: 示例1
     inputs:
     - name: input
+      data: git://examples/speech_with_noise1.wav
+  - name: 2
+    title: 示例2
+    inputs:
+    - name: input
       data: git://examples/speech_with_noise.wav
   inferencespec:
     cpu: 1

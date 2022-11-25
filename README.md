@@ -120,9 +120,25 @@ result = ans(
 
 ## 模型训练流程
 
-以下为模型训练示例代码，使用测试数据集，以便开发者能快速验证环境，串通流程。
+### 复制官方模型
+要训练您自己的降噪模型，首先需要一份官方模型的副本。ModelScope 框架默认把官方模型保存在本地缓存中，可以把本地缓存的模型目录copy一份到您的工作目录。
 
-如果想用更多数据进行训练，可以按照[数据集](https://modelscope.cn/datasets/modelscope/ICASSP_2021_DNS_Challenge/summary)说明文档，在本地生成训练数据，然后改用以下注释中的代码加载数据集。注意**其中的数据集路径（/your_local_path/ICASSP_2021_DNS_Challenge）要更新为您本地的实际路径**。
+检查目录./speech_frcrn_ans_cirm_16k，其中的 pytorch_model.bin 就是模型文件。如果想从头开始训练一个全新的模型，请删除掉这里的 pytorch_model.bin，避免程序运行时加载；如果想基于官方模型继续训练则不要删除。
+
+```bash
+cp -r ~/.cache/modelscope/hub/damo/speech_frcrn_ans_cirm_16k ./
+cd ./speech_frcrn_ans_cirm_16k
+rm pytorch_model.bin
+```
+
+目录中的configuration.json文件中是模型和训练的配置项，建议用户对代码逻辑非常熟悉以后再尝试修改。
+
+### 运行训练代码
+
+以下列出的为训练示例代码，其中有两个地方需要替换成您的本地路径：
+
+1. 用您前面下载的本地数据集路径替换`/your_local_path/ICASSP_2021_DNS_Challenge`
+2. 用您复制的官方模型路径替换模型路径
 
 ```python
 import os
@@ -134,39 +150,26 @@ from modelscope.msdatasets import MsDataset
 from modelscope.trainers import build_trainer
 from modelscope.utils.audio.audio_utils import to_segment
 
-tmp_dir = f'./ckpt'
+tmp_dir = './checkpoint'
 if not os.path.exists(tmp_dir):
     os.makedirs(tmp_dir)
 
-# Loading dataset
-hf_ds = MsDataset.load(
-    'ICASSP_2021_DNS_Challenge', split='test').to_hf_dataset()
+hf_ds = load_dataset(
+    '/your_local_path/ICASSP_2021_DNS_Challenge',
+    'train',
+    split='train')
 mapped_ds = hf_ds.map(
     to_segment,
     remove_columns=['duration'],
+    num_proc=8,
     batched=True,
     batch_size=36)
-mapped_ds = mapped_ds.train_test_split(test_size=150)
-# Use below code for real large data training
-# hf_ds = load_dataset(
-#     '/your_local_path/ICASSP_2021_DNS_Challenge',
-#     'train',
-#     split='train')
-# mapped_ds = hf_ds.map(
-#     to_segment,
-#     remove_columns=['duration'],
-#     num_proc=8,
-#     batched=True,
-#     batch_size=36)
-# mapped_ds = mapped_ds.train_test_split(test_size=3000)
-# End of comment
-
+mapped_ds = mapped_ds.train_test_split(test_size=3000)
 mapped_ds = mapped_ds.shuffle()
 dataset = MsDataset.from_hf_dataset(mapped_ds)
 
 kwargs = dict(
-    model='damo/speech_frcrn_ans_cirm_16k',
-    model_revision='beta',
+    model='your_local_path/speech_frcrn_ans_cirm_16k',
     train_dataset=dataset['train'],
     eval_dataset=dataset['test'],
     work_dir=tmp_dir)
@@ -174,6 +177,28 @@ trainer = build_trainer(
     Trainers.speech_frcrn_ans_cirm_16k, default_args=kwargs)
 trainer.train()
 ```
+
+训练按照默认配置共200轮，每轮2000个batch，训练出的模型文件会保存在代码中tmp_dir = './checkpoint'指定的目录。目录下还有一个log文件，记录了每个模型的训练和测试loss数据。
+
+### 使用您的模型
+
+从您训练出的模型中选择效果最好的，把模型文件copy到 `/your_local_path/speech_frcrn_ans_cirm_16k` ，重命名为 `pytorch_model.bin` 。
+把以下代码中模型路径 `/your_local_path/speech_frcrn_ans_cirm_16k` 替换为您复制的模型目录，就可以测试您的模型效果了。
+
+```python
+from modelscope.pipelines import pipeline
+from modelscope.utils.constant import Tasks
+
+
+ans = pipeline(
+    Tasks.acoustic_noise_suppression,
+    model='/your_local_path/speech_frcrn_ans_cirm_16k')
+result = ans(
+    'https://modelscope.oss-cn-beijing.aliyuncs.com/test/audios/speech_with_noise.wav',
+    output_path='output.wav')
+```
+
+代码中的http地址也可以换成您的本地音频文件路径，注意模型支持的音频格式是采样率16000，16bit的单通道wav文件。也可参考「在Notebook中开发」章节进行批量的音频文件处理。
 
 ## 数据评估及结果
 

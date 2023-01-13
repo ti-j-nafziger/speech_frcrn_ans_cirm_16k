@@ -15,7 +15,7 @@
     "win_len": 640,
     "win_inc": 320,
     "fft_len": 640,
-    "win_type": "hanning"
+    "win_type": "hann"
   },
   "preprocessor": {},
   "train": {

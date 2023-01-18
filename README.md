@@ -82,7 +82,8 @@ FRCRN语音降噪模型是基于频率循环 CRN (FRCRN) 新框架开发出来�
 
 #### 环境准备：
 
-* 本模型已经在1.8~1.11下测试通过，由于PyTorch v1.12.0的[BUG](https://github.com/pytorch/pytorch/issues/80837)，目前无法在v1.12.0上运行，如果您已经安装了此版本请执行以下命令回退到v1.11
+* 本模型支持Linxu，Windows和MacOS平台。
+* 本模型已经在1.8~1.11和1.13 下测试通过，由于PyTorch v1.12的[BUG](https://github.com/pytorch/pytorch/issues/80837)，无法在v1.12上运行，请升级到新版或执行以下命令回退到v1.11
 
 ```
 conda install pytorch==1.11 torchaudio torchvision -c pytorch
@@ -106,7 +107,7 @@ ans = pipeline(
     Tasks.acoustic_noise_suppression,
     model='damo/speech_frcrn_ans_cirm_16k')
 result = ans(
-    'https://modelscope.cn/api/v1/models/damo/speech_frcrn_ans_cirm_16k/repo?Revision=master&FilePath=examples/speech_with_noise1.wav',
+    'https://modelscope.oss-cn-beijing.aliyuncs.com/test/audios/speech_with_noise1.wav',
     output_path='output.wav')
 ```
 
